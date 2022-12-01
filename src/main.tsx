@@ -1,6 +1,6 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom/client'
-import Root, { loader as rootLoader, action as rootAction } from './routes/root'
+import Root, { loader as rootLoader, action as rootAction } from './routes/Root'
 import ErrorPage from './error-page'
 import Contact, {
   loader as contactLoader,
@@ -8,12 +8,18 @@ import Contact, {
 import EditContact, {
   action as editContactAction
 } from './routes/Edit'
+import { action as destroyAction } from './routes/Destroy'
+import Icon, {
+  loader as iconLoader,
+} from './routes/Icon'
 
 import {
   createBrowserRouter,
   RouterProvider,
   Route,
 } from "react-router-dom"
+import Index from './routes/Index'
+
 import "./index.css"
 
 const router = createBrowserRouter([
@@ -25,6 +31,10 @@ const router = createBrowserRouter([
     action: rootAction,
     children: [
       {
+        index: true,
+        element: <Index />
+      },
+      {
         path: 'contacts/:contactId',
         element: <Contact />,
         loader: contactLoader,
@@ -35,7 +45,15 @@ const router = createBrowserRouter([
         loader: contactLoader,
         action: editContactAction,
       },
+      {
+        path: 'contacts/:contactId/destroy',
+        action: destroyAction,
+        errorElement: <div>Oops! Something terrifying happened during destruction</div>
+      }
     ],
+  }, {
+    path: "/icon/:iconName",
+    element: <Icon />,
   }
 ])
 

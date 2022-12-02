@@ -23,6 +23,7 @@ export async function action({ request, params }) {
     favorite: formData.get('favorite') === 'true',
   })
 }
+
 export default function Contact() {
   const contact = useLoaderData() as Contact
 

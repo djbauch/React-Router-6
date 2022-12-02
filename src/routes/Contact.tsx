@@ -1,15 +1,28 @@
 import * as React from 'react'
-import { Form, useLoaderData } from 'react-router-dom'
-import { getContact } from '../contacts'
+import { Form, useLoaderData, useFetcher } from 'react-router-dom'
+import { getContact, updateContact } from '../contacts'
 
 type Contact = {
   avatar: string, first: string, last?: string, twitter?: string, notes?: string, favorite?: boolean
 }
 
-export async function loader({params}) : Promise<Contact> {
-  return getContact(params.contactId)
+export async function loader({ params }): Promise<Contact> {
+  const contact = await getContact(params.contactId)
+  if (!contact) {
+    throw new Response("", {
+      status: 404,
+      statusText: "Not Found"
+    })
+  }
+  return contact
 }
 
+export async function action({ request, params }) {
+  const formData = await request.formData()
+  return updateContact(params.contactId, {
+    favorite: formData.get('favorite') === 'true',
+  })
+}
 export default function Contact() {
   const contact = useLoaderData() as Contact
 
@@ -73,10 +86,12 @@ export default function Contact() {
 }
 
 function Favorite({ contact }) {
+  const fetcher = useFetcher()
   // yes, this is a `let` for later
-  let favorite = contact.favorite;
+  const favorite = (fetcher.formData) ? fetcher.formData.get('favorite') === 'true' : contact.favorite
+
   return (
-    <Form method="post">
+    <fetcher.Form method="post">
       <button
         name="favorite"
         value={favorite ? "false" : "true"}
@@ -88,6 +103,6 @@ function Favorite({ contact }) {
       >
         {favorite ? "★" : "☆"}
       </button>
-    </Form>
+    </fetcher.Form>
   );
 }

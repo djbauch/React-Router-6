@@ -4,6 +4,7 @@ import Root, { loader as rootLoader, action as rootAction } from './routes/Root'
 import ErrorPage from './error-page'
 import Contact, {
   loader as contactLoader,
+  action as contactAction,
 } from './routes/Contact'
 import EditContact, {
   action as editContactAction
@@ -31,30 +32,33 @@ const router = createBrowserRouter([
     action: rootAction,
     children: [
       {
-        index: true,
-        element: <Index />
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            index: true,
+            element: <Index />
+          },
+          {
+            path: 'contacts/:contactId',
+            element: <Contact />,
+            loader: contactLoader,
+            action: contactAction,
+          },
+          {
+            path: 'contacts/:contactId/edit',
+            element: <EditContact />,
+            loader: contactLoader,
+            action: editContactAction,
+          },
+          {
+            path: 'contacts/:contactId/destroy',
+            action: destroyAction,
+            errorElement: <div>Oops! Something terrifying happened during destruction</div>
+          }
+        ]
       },
-      {
-        path: 'contacts/:contactId',
-        element: <Contact />,
-        loader: contactLoader,
-      },
-      {
-        path: 'contacts/:contactId/edit',
-        element: <EditContact />,
-        loader: contactLoader,
-        action: editContactAction,
-      },
-      {
-        path: 'contacts/:contactId/destroy',
-        action: destroyAction,
-        errorElement: <div>Oops! Something terrifying happened during destruction</div>
-      }
-    ],
-  }, {
-    path: "/icon/:iconName",
-    element: <Icon />,
-  }
+    ]
+  }, 
 ])
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

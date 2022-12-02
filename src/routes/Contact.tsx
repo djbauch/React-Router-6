@@ -83,7 +83,7 @@ export default function Contact() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function Favorite({ contact }) {

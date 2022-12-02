@@ -23,7 +23,7 @@ import {
   createRoutesFromElements,
   RouterProvider,
   Route,
-} from "react-router-dom"
+} from 'react-router-dom'
 
 import Index from './routes/Index'
 

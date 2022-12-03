@@ -3,10 +3,10 @@ import { Form, useLoaderData, useFetcher } from 'react-router-dom'
 import { getContact, updateContact } from '../contacts'
 
 type Contact = {
-  avatar: string, first: string, last?: string, twitter?: string, notes?: string, favorite?: boolean
+  contactId: string, avatar: string, first: string, last?: string, twitter?: string, notes?: string, favorite?: boolean
 }
 
-export async function loader({ params }): Promise<Contact> {
+export async function loader({ params }: { params: Contact }): Promise<Contact> {
   const contact = await getContact(params.contactId)
   if (!contact) {
     throw new Response("", {
@@ -17,7 +17,7 @@ export async function loader({ params }): Promise<Contact> {
   return contact
 }
 
-export async function action({ request, params }) {
+export async function action({ request, params }: { request: any, params: Contact }) {
   const formData = await request.formData()
   return updateContact(params.contactId, {
     favorite: formData.get('favorite') === 'true',

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Form, useLoaderData, useFetcher } from 'react-router-dom'
 import { getContact, updateContact } from '../contacts'
 
-type Contact = {
+export type Contact = {
   contactId: string, avatar: string, first: string, last?: string, twitter?: string, notes?: string, favorite?: boolean
 }
 

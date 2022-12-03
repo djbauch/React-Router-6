@@ -1,0 +1,8 @@
+node_modules
+!node_modules/.bin
+!node_modules/.package-lock.json
+!node_modules/.vite/deps
+!node_modules/esbuild/bin/esbuild
+!node_modules/typescript-language-server/node_modules/bin/semver
+.DS_Store
+.env

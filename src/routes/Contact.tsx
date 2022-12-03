@@ -1,39 +1,53 @@
-import * as React from 'react'
-import { Form, useLoaderData, useFetcher } from 'react-router-dom'
-import { getContact, updateContact } from '../contacts'
+import * as React from "react";
+import { Form, useLoaderData, useFetcher } from "react-router-dom";
+import { getContact, updateContact } from "../contacts";
 
-export type Contact = {
-  contactId: string, avatar: string, first: string, last?: string, twitter?: string, notes?: string, favorite?: boolean
-}
+export type ContactRecord = {
+  contactId: string
+  avatar?: string
+  first?: string
+  last?: string
+  twitter?: string
+  notes?: string
+  favorite?: boolean
+  createdAt: number
+};
 
-export async function loader({ params }: { params: Contact }): Promise<Contact> {
-  const contact = await getContact(params.contactId)
+export async function loader({
+  params,
+}: {
+  params: ContactRecord;
+}): Promise<ContactRecord> {
+  const contact = await getContact(params.contactId);
   if (!contact) {
     throw new Response("", {
       status: 404,
-      statusText: "Not Found"
-    })
+      statusText: "Not Found",
+    });
   }
-  return contact
+  return contact;
 }
 
-export async function action({ request, params }: { request: any, params: Contact }) {
-  const formData = await request.formData()
+export async function action({
+  request,
+  params,
+}: {
+  request: any;
+  params: ContactRecord;
+}) {
+  const formData = await request.formData();
   return updateContact(params.contactId, {
-    favorite: formData.get('favorite') === 'true',
-  })
+    favorite: formData.get("favorite") === "true",
+  });
 }
 
 export default function Contact() {
-  const contact = useLoaderData() as Contact
+  const contact = useLoaderData() as ContactRecord;
 
   return (
     <div id="contact">
       <div>
-        <img
-          key={contact.avatar}
-          src={contact.avatar || undefined}
-        />
+        <img key={contact.avatar} src={contact.avatar || undefined} />
       </div>
 
       <div>
@@ -50,10 +64,7 @@ export default function Contact() {
 
         {contact.twitter && (
           <p>
-            <a
-              target="_blank"
-              href={`https://twitter.com/${contact.twitter}`}
-            >
+            <a target="_blank" href={`https://twitter.com/${contact.twitter}`}>
               {contact.twitter}
             </a>
           </p>
@@ -69,11 +80,7 @@ export default function Contact() {
             method="post"
             action="destroy"
             onSubmit={(event) => {
-              if (
-                !confirm(
-                  "Please confirm you want to delete this record."
-                )
-              ) {
+              if (!confirm("Please confirm you want to delete this record.")) {
                 event.preventDefault();
               }
             }}
@@ -83,24 +90,22 @@ export default function Contact() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-function Favorite({ contact }) {
-  const fetcher = useFetcher()
+function Favorite({ contact } : {contact: ContactRecord}) {
+  const fetcher = useFetcher();
   // yes, this is a `let` for later
-  const favorite = (fetcher.formData) ? fetcher.formData.get('favorite') === 'true' : contact.favorite
+  const favorite = fetcher.formData
+    ? fetcher.formData.get("favorite") === "true"
+    : contact.favorite;
 
   return (
     <fetcher.Form method="post">
       <button
         name="favorite"
         value={favorite ? "false" : "true"}
-        aria-label={
-          favorite
-            ? "Remove from favorites"
-            : "Add to favorites"
-        }
+        aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
       >
         {favorite ? "★" : "☆"}
       </button>

@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { Form, useLoaderData, redirect, useNavigate } from 'react-router-dom'
 import { updateContact } from '../contacts'
+import { ContactRecord } from './Contact'
 
-export async function action({ request, params }) {
+export async function action({ request, params } : {request: any, params: ContactRecord}) {
   const formData = await request.formData()
   const updates = Object.fromEntries(formData)
   await updateContact(params.contactId, updates)
@@ -10,7 +11,7 @@ export async function action({ request, params }) {
 }
 
 export default function EditContact() {
-  const contact = useLoaderData()
+  const contact = useLoaderData() as ContactRecord
   const navigate = useNavigate()
 
   return (

@@ -1,26 +1,27 @@
 import { useEffect } from 'react'
 import { Outlet, NavLink, useLoaderData, Form, redirect, useNavigation, useSubmit } from 'react-router-dom'
 import { getContacts, createContact } from '../contacts'
+import { ContactRecord } from './Contact'
 
 export async function action() {
   const contact = await createContact()
-  return redirect(`/contacts/${contact.id}/edit`)
+  return redirect(`/contacts/${contact.contactId!}/edit`)
 }
 
-export async function loader({ request }) {
+export async function loader({ request } : { request: {url: string}}) {
   const url = new URL(request.url)
   const q = url.searchParams.get('q')
-  const contacts = await getContacts(q);
+  const contacts = await getContacts(q || undefined);
   return { contacts, q };
 }
 
 export default function Root() {
-  const { contacts, q } = useLoaderData()
+  const { contacts, q } = useLoaderData() as {contacts: Array<Partial<ContactRecord>>, q: string}
   const navigation = useNavigation()
   const submit = useSubmit()
 
   const searching = navigation.location && new URLSearchParams(navigation.location.search).has('q')
-  
+
   useEffect(() => {
     (document.getElementById('q') as HTMLInputElement).value = q
   }, [q])
@@ -62,9 +63,9 @@ export default function Root() {
           {contacts.length ? (
             <ul>
               {contacts.map((contact) => (
-                <li key={contact.id}>
+                <li key={contact.contactId}>
 
-                  <NavLink to={`contacts/${contact.id}`}>
+                  <NavLink to={`contacts/${contact.contactId}`}>
                     {contact.first || contact.last ? (
                       <>
                         {contact.first} {contact.last}

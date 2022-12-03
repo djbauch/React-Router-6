@@ -1,8 +1,8 @@
-import { Form, useLoaderData, redirect } from 'react-router-dom'
+import { redirect } from 'react-router-dom'
 import { deleteContact } from '../contacts'
+import { ContactRecord } from './Contact'
 
-export async function action({params}) {
- // throw new Error("oh dang!")
-  await deleteContact(params.contactId)
+export async function action({params}: {params: Partial<ContactRecord>}) {
+  await deleteContact(params.contactId!)
   return redirect('/')
 }
